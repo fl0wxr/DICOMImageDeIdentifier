@@ -1,0 +1,7 @@
+src/dummy.py
+src/__pycache__
+inc
+dir_structure
+gen_sample_out/*
+!gen_sample_out/.gitkeep
+dataset/misc
