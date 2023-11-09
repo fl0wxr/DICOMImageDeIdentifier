@@ -38,8 +38,3 @@ class DetectionVisuals:
 
     def display():
         plt.show()
-
-    def store_fig(self, fp):
-        plt.savefig(fp, dpi=1200)
-        plt.close()
-        self.fig.clear()

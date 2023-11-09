@@ -29,7 +29,7 @@ To select an image text removal pipeline, open `main.py`, in the line
 ```
 PIPELINE = <PIPELINE_FUNCTION>
 ```
-replace `<PIPELINE_FUNCTION>` with one of the functions between the lines
+replace `<PIPELINE_FUNCTION>` with one of the functions within the lines
 ```
 ## ! Pipelines: Begin
 
@@ -39,16 +39,40 @@ replace `<PIPELINE_FUNCTION>` with one of the functions between the lines
 ```
 that can be found inside `dcm_img_text_remover.py`.
 
-### Input File
-
-To select the input DICOM file (with name e.g. `pos2.dcm`), first place it inside `./dataset/raw` and specify its path inside `dcm_img_text_remover.py` in the beginning of the pipeline's function (e.g. `rw_obj = rw.rw_1_dcm(filename = 'pos2.dcm')`) navigate inside `./src` and apply
+For one file conversion you can use
 ```
-python3 main.py
+presidio_dicom_image_text_remover
+pytesseract_dicom_image_text_remover
+keras_ocr_dicom_image_text_remover
 ```
 
-### Outputs
+For multiple file conversions you can use
+```
+MassConversion
+```
 
-You can find the output DICOM file along with its prediction plot on the path `./dataset/clean` with the corresponding filename as its input. If the plot is unwanted, it can be disabled by commenting out the lines
+### Input Files
+
+#### For One Input File
+
+To select one input DICOM file (with name e.g. `pos2.dcm`), first place it inside `../dataset/raw` and specify its path through the parameter `IN_PATH` at `main.py`. E.g.
+```
+IN_PATH = 'pos2.dcm'
+```
+
+#### For Multiple Input Files
+
+For multiple DICOM conversions simply paste your directory path (e.g. `../dataset/raw/direc`) and specify its path through the parameter `IN_PATH` at `main.py`. E.g.
+```
+IN_PATH = '../dataset/raw/direc'
+```
+by placing this line at the beginning of the pipeline's function inside `dcm_img_text_remover.py`.
+
+### Output Files
+
+#### For One Input File
+
+You can find the *cleaned* DICOM file along with its prediction plot on the path `./dataset/clean` with the corresponding filename as its input. If the plot is unwanted, it can be disabled by commenting out the lines
 ```
 vis_obj = visuals.DetectionVisuals(...)
 ```
@@ -60,9 +84,20 @@ rw_obj.store_fig(...)
 ```
 from the associated pipeline function inside `dcm_img_text_remover.py`.
 
+#### For Multiple Input Files
+
+You will find a copy of the input's directory structure placed at `./dataset/clean/direc` with the corresponding *cleaned* DICOM files, where `direc` is the name of the directory that was placed at `./dataset/raw`.
+
 ### Keras OCR | Parallel Computation
 
-Depending if your machine supports CUDA, you may enable GPU support to run this software by adjusting the corresponding `GPU` variable inside `main.py`. Hence to enable parallel computation (Requires CUDA!) set it to `True`, otherwise set it to `False`.
+Depending if your machine supports CUDA, you may enable GPU support to run this software by adjusting the corresponding `GPU` variable inside `main.py`. Hence to enable parallel computation (requires CUDA's Toolkit installed along with its prerequisites) set it to `True`, otherwise set it to `False`.
+
+### Run Script
+
+To execute navigate inside `./src` and apply
+```
+python3 main.py
+```
 
 ## Technical Description
 

@@ -118,11 +118,11 @@ def text_remover(img, bboxes: np.ndarray, initial_array_shape, downscaled_array_
 
 ## ! Pipelines: Begin
 
-def presidio():
+def presidio_dicom_image_text_remover(filename):
 
     t0 = time()
 
-    rw_obj = rw.rw_1_dcm(filename = 'pos2.dcm')
+    rw_obj = rw.rw_1_dcm(filename = filename)
 
     ## Get DICOM
     dcm = rw_obj.parse_file()
@@ -172,9 +172,9 @@ def presidio():
 
     return removal_period, total_period
 
-def pytesseract_dicom_image_text_remover():
+def pytesseract_dicom_image_text_remover(filename):
 
-    rw_obj = rw.rw_1_dcm(filename = 'pos2.dcm')
+    rw_obj = rw.rw_1_dcm(filename = filename)
 
     ## Get DICOM
     dcm = rw_obj.parse_file()
@@ -223,11 +223,11 @@ def pytesseract_dicom_image_text_remover():
     ## Save modified DICOM
     rw_obj.save_file(dcm = dcm)
 
-def keras_ocr_dicom_image_text_remover():
+def keras_ocr_dicom_image_text_remover(filename):
 
     def prep_det_keras_ocr(img):
 
-        img_prep = basic_preprocessing(img = img, downscale = False)
+        img_prep = basic_preprocessing(img = img, downscale = True)
         bboxes = det_keras_ocr(img_prep)
 
         return img_prep, bboxes
@@ -243,7 +243,7 @@ def keras_ocr_dicom_image_text_remover():
 
     t0 = time()
 
-    rw_obj = rw.rw_1_dcm(filename = 'pos2.dcm')
+    rw_obj = rw.rw_1_dcm(filename = filename)
 
     ## Get DICOM
     dcm = rw_obj.parse_file()
@@ -307,7 +307,7 @@ def keras_ocr_dicom_image_text_remover():
 
     return removal_period, total_period
 
-def keras_ocr_dicom_image_generator_text_remover():
+def keras_ocr_dicom_image_generator_text_remover(filename):
 
     def prep_det_keras_ocr(img):
 
@@ -327,7 +327,7 @@ def keras_ocr_dicom_image_generator_text_remover():
         return bboxes
 
 
-    rw_obj = rw.rw_1_dcm('pos2.dcm')
+    rw_obj = rw.rw_1_dcm(filename = filename)
 
     ## Get DICOM
     dcm = rw_obj.parse_file()
@@ -408,11 +408,89 @@ def keras_ocr_dicom_image_generator_text_remover():
 
     return -1, -1
 
+def MassConversion(DP):
+
+    def prep_det_keras_ocr(img):
+
+        img_prep = basic_preprocessing(img = img, downscale = False)
+        bboxes = det_keras_ocr(img_prep)
+
+        return img_prep, bboxes
+
+    def det_keras_ocr(img):
+
+        pipeline = keras_ocr.detection.Detector()
+
+        ## Returns a ndarray with shape (n_bboxes, 4, 2) where 4 is the number of points for each box, 2 are the plane coordinates.
+        bboxes = pipeline.detect([img], detection_threshold = .0)[0]
+
+        return bboxes
+
+    t0 = time()
+
+    rw_obj = rw.rw_2_dcm(dp = DP)
+
+    ## Get DICOM
+    dcm = rw_obj.parse_file()
+
+    ## Extract image data from dicom files
+    ## Scalar data type -> uint16
+    raw_img_uint16_grayscale = dcm.pixel_array
+
+    ## Secondary information about the DICOM file
+    print('Input DICOM file information')
+    print('Image shape: ', raw_img_uint16_grayscale.shape)
+    print('Modality: ', dcm.Modality)
+    print('Physical region: ', dcm.BodyPartExamined, end = 2 * '\n')
+
+    print('Input image shape: ', raw_img_uint16_grayscale.shape)
+
+    t1 = time()
+
+    raw_img_uint8_grayscale, bboxes = prep_det_keras_ocr(img = raw_img_uint16_grayscale)
+
+    removal_period = time() - t1
+
+    initial_array_shape = raw_img_uint16_grayscale.shape
+    downscaled_array_shape = raw_img_uint8_grayscale.shape[:-1]
+
+    if np.size(bboxes) != 0:
+
+        cleaned_img = text_remover\
+        (
+            img = raw_img_uint16_grayscale,
+            bboxes = bboxes,
+            initial_array_shape = initial_array_shape,
+            downscaled_array_shape = downscaled_array_shape
+        )
+
+        ## Contour
+        contour_display = keras_ocr.tools.drawBoxes\
+        (
+            image = raw_img_uint8_grayscale,
+            boxes = bboxes,
+            thickness = 5
+        )
+        vis_obj = visuals.DetectionVisuals(fig_title = 'Based on keras-ocr')
+        vis_obj.build_plt(imgs = [raw_img_uint16_grayscale, contour_display, cleaned_img], removal_period = removal_period)
+
+        rw_obj.store_fig(figure = vis_obj.fig)
+
+        ## Update the DICOM image data with the modified image
+        dcm.PixelData = cleaned_img.tobytes()
+
+    else:
+
+        print('No text detected.')
+
+    ## Save modified DICOM
+    rw_obj.save_file(dcm = dcm)
+
+    total_period = time() - t0
+
+    ## When finished with implementation, this line should be removed.
+    rw_obj.rm_out_dir(); exit()
+
+    return removal_period, total_period
+
 ## ! Pipelines: End
-
-
-
-
-
-
-
