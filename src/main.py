@@ -3,6 +3,24 @@ from pdb import set_trace as pause
 import numpy as np
 
 
+def time_format(seconds: float) -> str:
+
+    if seconds is not None:
+        seconds = int(seconds)
+        d = seconds // (3600 * 24)
+        h = seconds // 3600 % 24
+        m = seconds % 3600 // 60
+        s = seconds % 3600 % 60
+        if d > 0:
+            return '{:02d}:{:02d}:{:02d}:{:02d}'.format(d, h, m, s)
+        elif h > 0:
+            return '00:{:02d}:{:02d}:{:02d}'.format(h, m, s)
+        elif m > 0:
+            return '00:00:{:02d}:{:02d}'.format(m, s)
+        elif s >= 0:
+            return '00:00:00:{:02d}'.format(s)
+    return '-'
+
 def convert_one_file(PIPELINE, filename, n_reps = 1):
 
     total_periods = []
@@ -30,8 +48,9 @@ def convert_one_file(PIPELINE, filename, n_reps = 1):
 
 def convert_multiple_files(PIPELINE, DP):
 
-    PIPELINE(DP = DP)
-
+    total_period = PIPELINE(DP = DP)
+    print('Conversion completed successfully')
+    print('Total time needed in DD:HH:MM:SS format\n%s'%(time_format(total_period)))
 
 if __name__ == '__main__':
 
@@ -39,6 +58,7 @@ if __name__ == '__main__':
 
     GPU = True ## Set to True if you want to invoke NVIDIA GPU
     # PIPELINE = dcm_img_text_remover.keras_ocr_dicom_image_text_remover
+    # IN_PATH = 'pos1.dcm'
     PIPELINE = dcm_img_text_remover.MassConversion
     IN_PATH = '../dataset/raw/dummy_directory'
 
@@ -52,5 +72,7 @@ if __name__ == '__main__':
         elif tf.config.list_physical_devices('GPU')[0][1] == 'GPU':
             print('[ENABLED] PARALLEL COMPUTATION\n\n---')
 
-    convert_multiple_files(PIPELINE = PIPELINE, DP = IN_PATH)
-    # convert_one_file(PIPELINE = PIPELINE, filename = IN_PATH, n_reps = 5)
+    if PIPELINE in [dcm_img_text_remover.MassConversion]:
+        convert_multiple_files(PIPELINE = PIPELINE, DP = IN_PATH)
+    elif PIPELINE in [dcm_img_text_remover.keras_ocr_dicom_image_text_remover, dcm_img_text_remover.keras_ocr_dicom_image_generator_text_remover]:
+        convert_one_file(PIPELINE = PIPELINE, filename = IN_PATH, n_reps = 1)

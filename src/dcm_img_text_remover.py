@@ -72,7 +72,7 @@ def text_remover(img, bboxes: np.ndarray, initial_array_shape, downscaled_array_
 
     # img = img.max() - img ## In case i want to invert the input
 
-    reducted_region_color = np.mean(img)
+    reducted_region_color = np.mean(img).astype(np.uint16)
 
     multiplicative_mask = np.ones(downscaled_array_shape, dtype = np.uint8)
     additive_mask = np.zeros(initial_array_shape, dtype = np.uint8)
@@ -112,7 +112,7 @@ def text_remover(img, bboxes: np.ndarray, initial_array_shape, downscaled_array_
     # plt.show()
 
     img_ = img.copy()
-    img_ = img_ * multiplicative_mask + additive_mask
+    img_ = (img_ * multiplicative_mask + additive_mask)
 
     return img_
 
@@ -298,7 +298,7 @@ def keras_ocr_dicom_image_text_remover(filename):
 
     else:
 
-        print('No text detected.')
+        print('Image state: No text detected')
 
     ## Save modified DICOM
     rw_obj.save_file(dcm = dcm)
@@ -426,71 +426,77 @@ def MassConversion(DP):
 
         return bboxes
 
-    t0 = time()
-
     rw_obj = rw.rw_2_dcm(dp = DP)
 
-    ## Get DICOM
-    dcm = rw_obj.parse_file()
+    ## It is preferable to be below the __init__ of rw because there is a possibility for user input
+    t0 = time()
 
-    ## Extract image data from dicom files
-    ## Scalar data type -> uint16
-    raw_img_uint16_grayscale = dcm.pixel_array
+    while rw_obj.DICOM_IDX <= rw_obj.n_dicom_files - 1:
 
-    ## Secondary information about the DICOM file
-    print('Input DICOM file information')
-    print('Image shape: ', raw_img_uint16_grayscale.shape)
-    print('Modality: ', dcm.Modality)
-    print('Physical region: ', dcm.BodyPartExamined, end = 2 * '\n')
+        ## Get DICOM
+        dcm = rw_obj.parse_file()
 
-    print('Input image shape: ', raw_img_uint16_grayscale.shape)
+        ## Extract image data from dicom files
+        ## Scalar data type -> uint16
+        raw_img_uint16_grayscale = dcm.pixel_array
 
-    t1 = time()
+        print('Raw DICOM image shape:', raw_img_uint16_grayscale.shape)
 
-    raw_img_uint8_grayscale, bboxes = prep_det_keras_ocr(img = raw_img_uint16_grayscale)
+        ## Not necessarily all DICOM files contain these tags
+        # print('Modality:', dcm.Modality)
+        # print('Examined body region:', dcm.BodyPartExamined)
 
-    removal_period = time() - t1
+        t1 = time()
 
-    initial_array_shape = raw_img_uint16_grayscale.shape
-    downscaled_array_shape = raw_img_uint8_grayscale.shape[:-1]
+        raw_img_uint8_grayscale, bboxes = prep_det_keras_ocr(img = raw_img_uint16_grayscale)
 
-    if np.size(bboxes) != 0:
+        initial_array_shape = raw_img_uint16_grayscale.shape
+        downscaled_array_shape = raw_img_uint8_grayscale.shape[:-1]
 
-        cleaned_img = text_remover\
-        (
-            img = raw_img_uint16_grayscale,
-            bboxes = bboxes,
-            initial_array_shape = initial_array_shape,
-            downscaled_array_shape = downscaled_array_shape
-        )
+        if np.size(bboxes) != 0:
 
-        ## Contour
-        contour_display = keras_ocr.tools.drawBoxes\
-        (
-            image = raw_img_uint8_grayscale,
-            boxes = bboxes,
-            thickness = 5
-        )
-        vis_obj = visuals.DetectionVisuals(fig_title = 'Based on keras-ocr')
-        vis_obj.build_plt(imgs = [raw_img_uint16_grayscale, contour_display, cleaned_img], removal_period = removal_period)
+            cleaned_img = text_remover\
+            (
+                img = raw_img_uint16_grayscale,
+                bboxes = bboxes,
+                initial_array_shape = initial_array_shape,
+                downscaled_array_shape = downscaled_array_shape
+            )
 
-        rw_obj.store_fig(figure = vis_obj.fig)
+            image_processing_time = time() - t1
+            print('Processed image: %.3f'%image_processing_time)
 
-        ## Update the DICOM image data with the modified image
-        dcm.PixelData = cleaned_img.tobytes()
+            ## Contour
+            # contour_display = keras_ocr.tools.drawBoxes\
+            # (
+            #     image = raw_img_uint8_grayscale,
+            #     boxes = bboxes,
+            #     thickness = 5
+            # )
+            # vis_obj = visuals.DetectionVisuals(fig_title = 'Based on keras-ocr')
+            # vis_obj.build_plt(imgs = [raw_img_uint16_grayscale, contour_display, cleaned_img], removal_period = image_processing_time)
 
-    else:
+            # rw_obj.store_fig(figure = vis_obj.fig)
 
-        print('No text detected.')
+            ## Update the DICOM image data with the modified image
+            dcm.PixelData = cleaned_img.tobytes()
 
-    ## Save modified DICOM
-    rw_obj.save_file(dcm = dcm)
+        else:
 
-    total_period = time() - t0
+            image_processing_time = time() - t1
+            print('Processed image: %.3f'%image_processing_time)
 
-    ## When finished with implementation, this line should be removed.
-    rw_obj.rm_out_dir(); exit()
+            print('Image state: No text detected')
 
-    return removal_period, total_period
+        ## Save modified DICOM
+        rw_obj.export_processed_file(dcm = dcm)
+
+        print('Completion status: %.2f%%'%(100*(rw_obj.DICOM_IDX+1)/rw_obj.n_dicom_files))
+        print('---', end = 2 * '\n')
+
+        ## It is preferable to be at the end of the loop, as `next` may skip more than 1 steps at once, hence there might be an array overflow.
+        next(rw_obj)
+
+    return time() - t0
 
 ## ! Pipelines: End

@@ -5,7 +5,7 @@ import pandas as pd
 from pdb import set_trace as pause
 
 
-def time_format(seconds: int) -> str:
+def time_format(seconds: float) -> str:
     if seconds is not None:
         seconds = int(seconds)
         d = seconds // (3600 * 24)
