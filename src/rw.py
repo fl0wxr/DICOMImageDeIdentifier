@@ -87,6 +87,13 @@ class rw_2_dcm:
         print('Total number of DICOM files existing inside the input directory:\n%d'%(self.n_dicom_files))
         print('---', end = 2 * '\n')
 
+        overwrite_choices = {'O': 'Overwrite', 'I': 'Ignore'}
+        inp = input('About the DICOM files that already exist inside the output directory. If they have the same name as the corresponding input. How should they be handled?\n[I] Ignore DICOM files\n[O] Overwrite DICOM files with newly processed ones\n> ')
+        while inp not in overwrite_choices.keys():
+            inp = input('Select a valid input:\n> ')
+        print('Proceeding with:', overwrite_choices[inp])
+        self.overwrite_switch = inp == 'O'
+
         self.DICOM_IDX = -1
         next(self)
 
@@ -100,9 +107,12 @@ class rw_2_dcm:
             print('Raw DICOM file path:', self.raw_dicom_path)
             print('Clean DICOM file path:', self.clean_dicom_path)
             if os.path.exists(self.clean_dicom_path):
-                print('W: DICOM file already exists at the output path\n%s\nIgnoring'%(self.clean_dicom_path))
-                print('---', end = 2 * '\n')
-                next(self)
+                print('W: DICOM file already exists at the output path\n%s'%(self.clean_dicom_path))
+                if self.overwrite_switch:
+                    print('W: Duplicate file will potentially be overwritten')
+                else:
+                    print('Ignoring\n---', end = 2 * '\n')
+                    next(self)
         else:
             self.raw_dicom_path = None
             self.clean_dicom_path = None
@@ -146,13 +156,14 @@ class rw_2_dcm:
             if os.path.exists(self.clean_data_dp):
                 print('W: Failed to delete output directory.')
                 inp_choices = {'A': 'Abort', 'D': 'Delete', 'I': 'Ignore'}
-                inp = input('\nAvailable choices:\n[A] Abort operation\n[D] Override output directory deletion and make a fresh copy of the input directory structure\n[I] Ignore; Select this only if you are sure that the output directory structure is a replica of the input directory structure\n> ')
+                inp = input('\nAvailable choices:\n[A] Abort operation\n[D] Override output directory deletion and make a fresh copy of the input directory structure\n[I] Ignore; select this only if you are sure that the output directory structure is a replica of the input directory structure\n> ')
 
                 while inp not in inp_choices.keys():
                     inp = input('Select a valid input:\n> ')
 
                 print('Proceeding with:', inp_choices[inp])
                 if inp == 'D':
+                    ## The previous if can only happen if self.SAFETY_SWITCH is set to True
                     self.SAFETY_SWITCH = False
                     self.rm_out_dir()
                     self.SAFETY_SWITCH = True
