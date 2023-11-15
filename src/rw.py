@@ -45,10 +45,7 @@ class rw_1_dcm:
 class rw_2_dcm:
     '''
         Description:
-            Can read and write multiple files on a directory. Given a directory path (e.g. '../dataset/raw/direc'), it
-            1. Copies the directory structure along with all non-DICOM files inside '../dataset/clean'.
-            2. Recursively searches all DICOM files inside the input directory.
-            3. Parses all found DICOM files from inside the input directory, and pastes them in the respective paths of the output directory after a potential modification. If the output DICOM path already contains a DICOM file, then it skips it.
+            Can read and write multiple files on a directory.
     '''
 
     def __init__(self, dp: str):
