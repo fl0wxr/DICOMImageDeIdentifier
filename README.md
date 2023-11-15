@@ -55,18 +55,17 @@ MassConversion
 
 #### For One Input File
 
-To select one input DICOM file (with name e.g. `pos2.dcm`), first place it inside `../dataset/raw` and specify its path through the parameter `IN_PATH` at `main.py`. E.g.
+To select one input DICOM file (with name e.g. `pos2.dcm`), first place it inside `../dataset/raw` and specify its path through the parameter `IN_PATH` at `main.py`, e.g.
 ```
 IN_PATH = 'pos2.dcm'
 ```
 
 #### For Multiple Input Files
 
-For multiple DICOM conversions simply paste your directory path (e.g. `../dataset/raw/direc`) and specify its path through the parameter `IN_PATH` at `main.py`. E.g.
+For multiple DICOM conversions simply paste your directory path (e.g. `../dataset/raw/direc`) and specify its path through the parameter `IN_PATH` at `main.py` by placing this line at the beginning of the pipeline's function inside `dcm_img_text_remover.py`, e.g.
 ```
 IN_PATH = '../dataset/raw/direc'
 ```
-by placing this line at the beginning of the pipeline's function inside `dcm_img_text_remover.py`.
 
 ### Output Files
 

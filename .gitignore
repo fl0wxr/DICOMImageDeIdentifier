@@ -5,3 +5,4 @@ gen_sample_out/*
 !gen_sample_out/.gitkeep
 dataset/misc
 .$*
+info.md
