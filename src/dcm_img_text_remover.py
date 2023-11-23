@@ -129,6 +129,7 @@ def presidio_dicom_image_text_remover(filename):
 
     ## Extract image data from dicom files
     ## Scalar data type -> uint16
+    dcm.decompress()
     raw_img_uint16_grayscale = dcm.pixel_array
 
     ## Secondary information about the DICOM file
@@ -181,6 +182,7 @@ def pytesseract_dicom_image_text_remover(filename):
 
     ## Extract image data from dicom files
     ## Scalar data type -> uint16
+    dcm.decompress()
     raw_img_uint16_grayscale = dcm.pixel_array
 
     print('Image shape: ', raw_img_uint16_grayscale.shape)
@@ -250,6 +252,7 @@ def keras_ocr_dicom_image_text_remover(filename):
 
     ## Extract image data from dicom files
     ## Scalar data type -> uint16
+    dcm.decompress()
     raw_img_uint16_grayscale = dcm.pixel_array
 
     ## Secondary information about the DICOM file
@@ -334,6 +337,7 @@ def keras_ocr_dicom_image_generator_text_remover(filename):
 
     ## Extract image data from dicom files
     ## Scalar data type -> uint16
+    dcm.decompress()
     original_image_array = dcm.pixel_array
 
     dataset_list, sample_info = data_generator(original_image_array = original_image_array)
@@ -438,6 +442,7 @@ def MassConversion(DP):
 
         ## Extract image data from dicom files
         ## Scalar data type -> uint16
+        dcm.decompress()
         raw_img_uint16_grayscale = dcm.pixel_array
 
         print('Raw DICOM image shape:', raw_img_uint16_grayscale.shape)
