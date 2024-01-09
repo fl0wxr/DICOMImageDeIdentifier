@@ -89,7 +89,7 @@ To execute navigate inside `./src` and apply
 ```
 python3 main.py -p <input_directory_path> --gpu
 ```
-For CPU support one may remove the `--gpu` argument
+To avoid using GPU, one may remove the `--gpu` argument.
 
 ## Technical Description
 
