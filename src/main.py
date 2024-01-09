@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     ## ! Initial parameters: Begin
 
-    GPU = True ## Set to True if you want to invoke NVIDIA GPU
+    GPU = True ## Set to True if you want to invoke Cuda
     # PIPELINE = dcm_img_text_remover.keras_ocr_dicom_image_text_remover
     # IN_PATH = 'pos1.dcm'
     PIPELINE = dcm_img_text_remover.MassConversion

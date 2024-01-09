@@ -493,6 +493,14 @@ def MassConversion(DP):
 
             print('Image state: No text detected')
 
+        ## Section E.3.1 (NEMA)
+        dcm.add_new\
+        (
+            tag = (0x0028, 0x0301),
+            VR = 'LO',
+            value = 'NO'
+        )
+
         ## Save modified DICOM
         rw_obj.export_processed_file(dcm = dcm)
 
