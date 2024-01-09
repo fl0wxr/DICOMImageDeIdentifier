@@ -83,20 +83,13 @@ rw_obj.store_fig(...)
 ```
 from the associated pipeline function inside `dcm_img_text_remover.py`.
 
-#### For Multiple Input Files
-
-You will find a copy of the input's directory structure placed at `./dataset/clean/direc` with the corresponding *cleaned* DICOM files, where `direc` is the name of the directory that was placed at `./dataset/raw`.
-
-### Keras OCR | Parallel Computation
-
-Depending if your machine supports CUDA, you may enable GPU support to run this software by adjusting the corresponding `GPU` variable inside `main.py`. Hence to enable parallel computation (requires CUDA's Toolkit installed along with its prerequisites) set it to `True`, otherwise set it to `False`.
-
 ### Run Script
 
 To execute navigate inside `./src` and apply
 ```
-python3 main.py
+python3 main.py -p <input_directory_path> --gpu
 ```
+For CPU support one may remove the `--gpu` argument
 
 ## Technical Description
 

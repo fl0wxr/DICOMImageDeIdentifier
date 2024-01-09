@@ -18,7 +18,7 @@ def time_format(seconds: float) -> str:
             return '00:{:02d}:{:02d}:{:02d}'.format(h, m, s)
         elif m > 0:
             return '00:00:{:02d}:{:02d}'.format(m, s)
-        elif s > 0:
+        elif s >= 0:
             return '00:00:00:{:02d}'.format(s)
     return '-'
 

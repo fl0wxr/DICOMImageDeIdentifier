@@ -2,6 +2,7 @@ import dcm_img_text_remover
 from pdb import set_trace as pause
 import numpy as np
 import tensorflow as tf
+import argparse
 
 
 def time_format(seconds: float) -> str:
@@ -55,13 +56,20 @@ def convert_multiple_files(PIPELINE, DP):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description = 'Parameters')
+
+    parser.add_argument('-p', help = 'Input path', type = str)
+    parser.add_argument('--gpu', default = False, help = 'Enable GPU or not', action=argparse.BooleanOptionalAction)
+
+    args = parser.parse_args()
+
     ## ! Initial parameters: Begin
 
-    GPU = True ## Set to True if you want to invoke Cuda
+    GPU = args.gpu #True ## Set to True if you want to invoke Cuda
     # PIPELINE = dcm_img_text_remover.keras_ocr_dicom_image_text_remover
     # IN_PATH = 'pos1.dcm'
     PIPELINE = dcm_img_text_remover.MassConversion
-    IN_PATH = '../dataset/raw/dummy_directory'
+    IN_PATH = args.p #'../dataset/raw/dummy_directory'
 
     ## ! Initial parameters: End
 

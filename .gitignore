@@ -4,5 +4,8 @@ dir_structure
 gen_sample_out/*
 !gen_sample_out/.gitkeep
 dataset/misc
+dataset/clean/*
+!dataset/clean/.gitkeep
+
 .$*
 info.md
