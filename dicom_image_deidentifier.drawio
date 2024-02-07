@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2023-11-07T14:23:08.150Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="kWC6xcINtd-599uZQD8R" version="22.0.3" type="device">
+<mxfile host="Electron" modified="2024-02-07T12:32:07.617Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.0.2 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="HsNzp4T1KabTaO8qNFnk" version="23.0.2" type="device">
   <diagram name="Page-1" id="B53pz77gPAQq5iHdCauW">
-    <mxGraphModel dx="1195" dy="702" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+    <mxGraphModel dx="1182" dy="495" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -40,7 +40,7 @@
             <mxPoint x="360" y="340" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="gjRXffhreTVsCTYlbyoW-13" value="\( \mathbf{I} \mapsto 255 \cdot \dfrac{\mathbf{I}}{\max(\mathbf{I})} \)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="gjRXffhreTVsCTYlbyoW-13" value="Min-Max Normalization" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="480" y="319.5" width="115" height="40" as="geometry" />
         </mxCell>
         <mxCell id="gjRXffhreTVsCTYlbyoW-17" value="" style="endArrow=classicThin;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;endFill=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="F3upc_59F93xKlea9PuA-2" target="gjRXffhreTVsCTYlbyoW-18" edge="1">

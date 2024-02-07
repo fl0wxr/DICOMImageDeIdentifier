@@ -53,7 +53,7 @@ def basic_preprocessing(img, downscale, toint8 = True, multichannel = True) -> n
         print('Detection input downscaled to (%d, %d)'%(new_shape[0], new_shape[1]))
 
     if toint8:
-        img = (255.0 * (img / np.max(img))).astype(np.uint8)
+        img = (255.0 * ((img - np.min(img)) / (np.max(img) - np.min(img)))).astype(np.uint8)
 
     if (multichannel) and (len(img.shape) == 2):
         img = np.stack(3*[img], axis = -1)
