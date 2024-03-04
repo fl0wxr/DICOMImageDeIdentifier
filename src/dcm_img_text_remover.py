@@ -443,9 +443,9 @@ def MassConversion(DP):
         ## Extract image data from dicom files
         ## Scalar data type -> uint16
         dcm.decompress()
-        raw_img_uint16_grayscale = dcm.pixel_array
+        raw_img_uint16 = dcm.pixel_array
 
-        print('Raw DICOM image shape:', raw_img_uint16_grayscale.shape)
+        print('Raw DICOM image shape:', raw_img_uint16.shape)
 
         ## Not necessarily all DICOM files contain these tags
         # print('Modality:', dcm.Modality)
@@ -453,16 +453,16 @@ def MassConversion(DP):
 
         t1 = time()
 
-        raw_img_uint8_rgb, bboxes = prep_det_keras_ocr(img = raw_img_uint16_grayscale)
+        raw_img_uint8_rgb, bboxes = prep_det_keras_ocr(img = raw_img_uint16)
 
-        initial_array_shape = raw_img_uint16_grayscale.shape
+        initial_array_shape = raw_img_uint16.shape
         downscaled_array_shape = raw_img_uint8_rgb.shape[:-1]
 
         if np.size(bboxes) != 0:
 
             cleaned_img = text_remover\
             (
-                img = raw_img_uint16_grayscale,
+                img = raw_img_uint16,
                 bboxes = bboxes,
                 initial_array_shape = initial_array_shape,
                 downscaled_array_shape = downscaled_array_shape
@@ -479,7 +479,7 @@ def MassConversion(DP):
             #     thickness = 5
             # )
             # vis_obj = visuals.DetectionVisuals(fig_title = 'Based on keras-ocr')
-            # vis_obj.build_plt(imgs = [raw_img_uint16_grayscale, contour_display, cleaned_img], removal_period = image_processing_time)
+            # vis_obj.build_plt(imgs = [raw_img_uint16, contour_display, cleaned_img], removal_period = image_processing_time)
 
             # rw_obj.store_fig(figure = vis_obj.fig)
 
