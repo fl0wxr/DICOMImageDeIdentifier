@@ -453,10 +453,10 @@ def MassConversion(DP):
 
         t1 = time()
 
-        raw_img_uint8_grayscale, bboxes = prep_det_keras_ocr(img = raw_img_uint16_grayscale)
+        raw_img_uint8_rgb, bboxes = prep_det_keras_ocr(img = raw_img_uint16_grayscale)
 
         initial_array_shape = raw_img_uint16_grayscale.shape
-        downscaled_array_shape = raw_img_uint8_grayscale.shape[:-1]
+        downscaled_array_shape = raw_img_uint8_rgb.shape[:-1]
 
         if np.size(bboxes) != 0:
 
@@ -474,7 +474,7 @@ def MassConversion(DP):
             ## Contour
             # contour_display = keras_ocr.tools.drawBoxes\
             # (
-            #     image = raw_img_uint8_grayscale,
+            #     image = raw_img_uint8_rgb,
             #     boxes = bboxes,
             #     thickness = 5
             # )
